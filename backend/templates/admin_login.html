@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - CPP-IPR</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-container {
+      max-width: 450px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .login-card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .login-header h2 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .login-header p {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+      color: #cbd5f5;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.7rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: #0f172a;
+      color: #e5e7eb;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #f59e0b;
+    }
+
+    .captcha-container {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 0.75rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .captcha-code {
+      font-family: monospace;
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 6px;
+      text-align: center;
+      padding: 0.75rem;
+      background: #020617;
+      border-radius: 6px;
+      color: #f59e0b;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 0.7rem;
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-login:hover {
+      opacity: 0.9;
+    }
+
+    .flash-messages {
+      margin-bottom: 1rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .flash-success {
+      background: #166534;
+      color: #dcfce7;
+      border: 1px solid #22c55e;
+    }
+
+    .flash-error {
+      background: #7f1d1d;
+      color: #fecaca;
+      border: 1px solid #ef4444;
+    }
+
+    .flash-warning {
+      background: #854d0e;
+      color: #fef08a;
+      border: 1px solid #eab308;
+    }
+
+    .flash-attempts {
+      background: #9a3412;
+      color: #fed7aa;
+      border: 1px solid #f97316;
+    }
+
+    .flash-locked {
+      background: #450a0a;
+      color: #fecaca;
+      border: 1px solid #dc2626;
+    }
+
+    .help-text {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <h2>Admin Login</h2>
+        <p>Enter your credentials to access the dashboard</p>
+      </div>
+
+      <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+      </div>
+
+      <form method="POST" action="{{ url_for('admin_auth.admin_login') }}">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required autofocus placeholder="Enter your username">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required placeholder="Enter your password">
+        </div>
+
+        <div class="captcha-container">
+          <div class="captcha-code" id="captchaCode"></div>
+          <input type="text" id="captcha_input" name="captcha_input" placeholder="Enter CAPTCHA code" required
+            style="width: 100%; margin-top: 0.5rem; padding: 0.5rem; border-radius: 6px; border: 1px solid rgba(148,163,184,0.35); background: #020617; color: #e5e7eb;">
+        </div>
+
+        <input type="hidden" name="captcha_value" id="captcha_value">
+
+        <button type="submit" class="btn-login">Login</button>
+      </form>
+
+      <div class="help-text">
+        Contact system administrator if you need assistance
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generateCaptcha() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+      let captcha = '';
+      for (let i = 0; i < 6; i++) {
+        captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return captcha;
+    }
+
+    function displayCaptcha() {
+      const captcha = generateCaptcha();
+      document.getElementById('captchaCode').textContent = captcha;
+      document.getElementById('captcha_value').value = captcha;
+    }
+
+    document.getElementById('captchaCode').addEventListener('click', function () {
+      displayCaptcha();
+      document.getElementById('captcha_input').value = '';
+    });
+
+    displayCaptcha();
+  </script>
+</body>
+
+</html>

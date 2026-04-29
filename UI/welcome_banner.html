@@ -1,0 +1,280 @@
+<!-- =========================
+     WELCOME BANNER FRAGMENT
+     ========================= -->
+<section class="welcome-banner">
+
+  <div class="welcome-card outlined">
+
+    <!-- LEFT: PHOTO -->
+    <div class="welcome-photo">
+      <img src="/assets/images/static/srm.jpg" alt="Dr. Smruti Ranjan Mohanty">
+    </div>
+
+    <!-- RIGHT: CONTENT -->
+    <div class="welcome-content">
+
+      <p class="designation bilingual-text" data-en="Centre Director" data-hi="केंद्र निदेशक">
+        Centre Director
+      </p>
+
+      <h2 class="name-hi bilingual-text" data-en="Dr. Smruti Ranjan Mohanty, Professor - G"
+        data-hi="डॉ. स्मृति रंजन महान्ति, प्रोफेसर – जी">
+        डॉ. स्मृति रंजन महान्ति, प्रोफेसर – जी
+      </h2>
+
+      <p class="contact">
+        <strong class="bilingual-text" data-en="E-mail:" data-hi="ई-मेल:">E-mail:</strong>
+        <a href="mailto:smruti@cppipr.res.in">smruti@cppipr.res.in</a><br>
+        <strong class="bilingual-text" data-en="Phone:" data-hi="फ़ोन:">Phone:</strong> 0361-2801501 / 02
+      </p>
+
+      <h3 class="welcome-title bilingual-text" data-en="Welcome to CPP-IPR" data-hi="सीपीपी-आईपीआर में आपका स्वागत है">
+        Welcome to CPP-IPR
+      </h3>
+
+      <p class="welcome-text bilingual-text"
+        data-en="Centre of Plasma Physics – Institute for Plasma Research (CPP-IPR) is a research centre of Institute for Plasma Research (IPR), Gandhinagar, Gujarat, an autonomous institute under the Department of Atomic Energy (DAE), Government of India."
+        data-hi="प्लाज़्मा भौतिकी केंद्र – प्लाज़्मा अनुसंधान संस्थान (सीपीपी-आईपीआर), प्लाज़्मा अनुसंधान संस्थान (आईपीआर), गांधीनगर, गुजरात का एक अनुसंधान केंद्र है, जो परमाणु ऊर्जा विभाग (पऊवि), भारत सरकार के अंतर्गत एक स्वायत्त संस्थान है।">
+        Centre of Plasma Physics – Institute for Plasma Research (CPP-IPR) is a
+        research centre of Institute for Plasma Research (IPR), Gandhinagar,
+        Gujarat, an autonomous institute under the Department of Atomic Energy
+        (DAE), Government of India.
+      </p>
+
+      <a href="/pages/Profile/about.html" class="read-more bilingual-text" data-en="Continue reading…"
+        data-hi="पढ़ना जारी रखें…">
+        Continue reading…
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ---------- WELCOME BANNER ---------- */
+  .welcome-banner {
+    margin: 1rem auto;
+  }
+
+  /* CARD */
+  .welcome-card.outlined {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem;
+    border: 1px solid #d0d7e2;
+    border-radius: 16px;
+    background: #ffffff;
+  }
+
+  /* PHOTO */
+  .welcome-photo {
+    flex: 0 0 400px;
+  }
+
+  .welcome-photo img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* CONTENT */
+  .welcome-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .designation {
+    margin: 0;
+    font-weight: 600;
+    color: #003366;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .name-hi {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #1a1a2e;
+    line-height: 1.4;
+  }
+
+  .contact {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .contact a {
+    color: #003366;
+    text-decoration: none;
+  }
+
+  .contact a:hover {
+    text-decoration: underline;
+  }
+
+  .welcome-title {
+    margin: 0.5rem 0 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #003366;
+  }
+
+  .welcome-text {
+    text-align: justify;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  .read-more {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: #003366;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+    align-self: flex-start;
+  }
+
+  .read-more:hover {
+    text-decoration: underline;
+  }
+
+  /* ---------- TABLET ---------- */
+  @media (max-width: 1024px) {
+    .welcome-photo {
+      flex: 0 0 320px;
+    }
+
+    .welcome-card.outlined {
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+
+    .welcome-title {
+      font-size: 1.3rem;
+    }
+
+    .welcome-text {
+      font-size: 0.9rem;
+    }
+
+    .name-hi {
+      font-size: 1.1rem;
+    }
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 768px) {
+    .welcome-card.outlined {
+      flex-direction: column;
+      align-items: center;
+      padding: 1.25rem;
+    }
+
+    .welcome-photo {
+      flex: none;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .welcome-content {
+      text-align: center;
+      width: 100%;
+      align-items: center;
+    }
+
+    .name-hi {
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .designation,
+    .contact {
+      text-align: center;
+    }
+
+    .welcome-title {
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .welcome-text {
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .read-more {
+      align-self: center;
+    }
+  }
+</style>
+
+<script>
+  /* ==========================
+     CLASS-BASED UI BILINGUAL
+     Supports HTML content (sup, sub, strong, em, etc.)
+     ========================== */
+  function applyClassBasedBilingual(lang) {
+    document
+      .querySelectorAll('.bilingual-text')
+      .forEach(el => {
+        const html = lang === 'hi' ? el.getAttribute('data-hi') : el.getAttribute('data-en');
+        if (html) {
+          el.innerHTML = html;
+        }
+      });
+  }
+
+  /* ==========================
+     LANGUAGE TOGGLE LOGIC FOR WELCOME BANNER
+     ========================== */
+  (function initWelcomeBannerBilingual() {
+    // Function to initialize translations for this banner
+    function initBannerTranslations() {
+      const savedLang = localStorage.getItem('preferred-language') || 'en';
+      applyClassBasedBilingual(savedLang);
+    }
+
+    // Listen for language changes from header
+    function listenForLanguageChanges() {
+      // Override localStorage.setItem to detect language changes
+      const originalSetItem = localStorage.setItem;
+      localStorage.setItem = function (key, value) {
+        originalSetItem.apply(this, arguments);
+        if (key === 'preferred-language') {
+          applyClassBasedBilingual(value);
+        }
+      };
+
+      // Also listen for storage events from other tabs
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'preferred-language') {
+          applyClassBasedBilingual(e.newValue);
+        }
+      });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        initBannerTranslations();
+        listenForLanguageChanges();
+      });
+    } else {
+      initBannerTranslations();
+      listenForLanguageChanges();
+    }
+  })();
+</script>

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard - CPP-IPR</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+    }
+
+    /* Header */
+    .analytics-header {
+      background: #020617;
+      padding: 1rem 1.5rem;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .period-selector {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .period-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #e5e7eb;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .period-btn:hover,
+    .period-btn.active {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      color: #0b1120;
+      border-color: transparent;
+    }
+
+    .export-btn,
+    .refresh-btn {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #e5e7eb;
+      padding: 0.4rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .export-btn:hover,
+    .refresh-btn:hover {
+      background: #334155;
+    }
+
+    .exit-btn {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #e5e7eb;
+      padding: 0.4rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+
+    .exit-btn:hover {
+      background: #334155;
+    }
+
+    /* Dashboard Sections */
+    .dashboard {
+      padding: 0;
+    }
+
+    .section-card {
+      background: #020617;
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #f59e0b;
+      display: inline-block;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+
+    .stat-card h3 {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .stat-card small {
+      font-size: 0.7rem;
+      color: #64748b;
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th,
+    td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    th {
+      color: #93c5fd;
+      background: rgba(15, 23, 42, 0.6);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .badge-success {
+      background: #166534;
+      color: #dcfce7;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .badge-danger {
+      background: #7f1d1d;
+      color: #fecaca;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .badge-warning {
+      background: #854d0e;
+      color: #fef08a;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .badge-info {
+      background: #1e3a8a;
+      color: #bfdbfe;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .hour-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.25rem 0;
+    }
+
+    .hour-label {
+      width: 50px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    .hour-bar {
+      flex: 1;
+      background: #1e293b;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .hour-fill {
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      height: 25px;
+      border-radius: 5px;
+      transition: width 0.3s;
+    }
+
+    .hour-count {
+      width: 50px;
+      font-size: 0.75rem;
+      text-align: right;
+      color: #94a3b8;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: #94a3b8;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      border-radius: 8px 8px 0 0;
+      font-weight: 500;
+    }
+
+    .tab:hover {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .tab.active {
+      color: #f59e0b;
+      border-bottom: 2px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #94a3b8;
+    }
+
+    .loading::before {
+      content: "📊";
+      display: block;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .footer-note {
+      text-align: center;
+      padding: 1rem;
+      color: #64748b;
+      font-size: 0.75rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+      margin-top: 1rem;
+    }
+
+    code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: monospace;
+    }
+
+    @media (max-width: 768px) {
+      .page {
+        padding: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tab {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+
+      th,
+      td {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="analytics-header">
+      <h1>Analytics Dashboard | CPP-IPR</h1>
+      <div class="header-actions">
+        <div class="period-selector">
+          <button class="period-btn" data-period="daily">Daily</button>
+          <button class="period-btn" data-period="monthly">Monthly</button>
+          <button class="period-btn" data-period="yearly">Yearly</button>
+          <button class="period-btn active" data-period="all">All Time</button>
+        </div>
+        <select id="export-type"
+          style="background: #1e293b; color: #e5e7eb; padding: 0.4rem 1rem; border-radius: 8px; border: 1px solid rgba(148,163,184,0.35);">
+          <option value="frontend">Export Frontend Data</option>
+          <option value="backend">Export Backend Data</option>
+          <option value="auth">Export Auth Events</option>
+          <option value="seo">Export SEO Report</option>
+        </select>
+        <button class="export-btn" id="export-csv-btn">Export CSV</button>
+        <button class="export-btn" id="export-pdf-btn">Export PDF</button>
+        <button class="refresh-btn" id="refresh-btn">Refresh</button>
+        <a href="{{ url_for('admin_home.admin_home') }}" class="exit-btn">Exit</a>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="frontend">Frontend Analytics</button>
+      <button class="tab" data-tab="backend">Admin Panel Analytics</button>
+      <button class="tab" data-tab="seo">SEO Status</button>
+    </div>
+
+    <div id="dashboard">
+      <div class="loading">Loading analytics data...</div>
+    </div>
+  </div>
+
+  <script>
+    let currentPeriod = 'all';
+    let currentData = null;
+    let currentTab = 'frontend';
+
+    function saveCurrentTab(tabId) {
+      localStorage.setItem('analytics_current_tab', tabId);
+      currentTab = tabId;
+    }
+
+    function loadSavedTab() {
+      const savedTab = localStorage.getItem('analytics_current_tab');
+      if (savedTab && (savedTab === 'frontend' || savedTab === 'backend' || savedTab === 'seo')) {
+        currentTab = savedTab;
+      } else {
+        currentTab = 'frontend';
+      }
+      return currentTab;
+    }
+
+    function activateTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => {
+        if (tab.dataset.tab === tabId) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      document.querySelectorAll('.tab-content').forEach(content => {
+        if (content.id === `${tabId}-tab`) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+        }
+      });
+
+      saveCurrentTab(tabId);
+    }
+
+    async function loadAnalytics(keepTab = true) {
+      const dashboard = document.getElementById('dashboard');
+      dashboard.innerHTML = '<div class="loading">Loading analytics data...</div>';
+
+      try {
+        const response = await fetch(`/cppipr_cms/analytics/data?period=${currentPeriod}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+
+        currentData = data;
+        renderDashboard(data);
+
+        if (keepTab) {
+          const savedTab = loadSavedTab();
+          activateTab(savedTab);
+        } else {
+          activateTab('frontend');
+        }
+      } catch (error) {
+        dashboard.innerHTML = `<div class="loading">Failed to load data: ${error.message}<br><small>Make sure the backend server is running and you have traffic data.</small></div>`;
+      }
+    }
+
+    function renderDashboard(data) {
+      const html = `
+        <div id="frontend-tab" class="tab-content">
+          ${renderFrontendAnalytics(data.frontend)}
+        </div>
+        <div id="backend-tab" class="tab-content">
+          ${renderBackendAnalytics(data.backend)}
+        </div>
+        <div id="seo-tab" class="tab-content">
+          ${renderSEOAnalytics(data.seo)}
+        </div>
+        <div class="footer-note">
+          Generated: ${data.generated_at} | Period: ${data.period.toUpperCase()} | Frontend Hits: ${data.frontend.total_hits} | Admin Visits: ${data.backend.total_admin_visits}
+        </div>
+      `;
+
+      document.getElementById('dashboard').innerHTML = html;
+
+      if (data.frontend.hourly_distribution && Object.keys(data.frontend.hourly_distribution).length > 0) {
+        renderHourlyChart(data.frontend.hourly_distribution);
+      }
+      if (data.frontend.daily_trend && Object.keys(data.frontend.daily_trend).length > 0) {
+        renderDailyTrendChart(data.frontend.daily_trend);
+      }
+    }
+
+    function renderFrontendAnalytics(frontend) {
+      if (!frontend.total_hits || frontend.total_hits === 0) {
+        return `
+          <div class="section-card">
+            <p style="text-align: center; color: #94a3b8;">No frontend traffic data available yet.<br>Visit the frontend website (port 5000) to generate analytics data.</p>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Unique Visitors</h3>
+            <div class="stat-value">${frontend.total_visitors.toLocaleString()}</div>
+            <small>Unique IP addresses</small>
+          </div>
+          <div class="stat-card">
+            <h3>Total Hits</h3>
+            <div class="stat-value">${frontend.total_hits.toLocaleString()}</div>
+            <small>Total page views</small>
+          </div>
+          <div class="stat-card">
+            <h3>Average Hits per Visitor</h3>
+            <div class="stat-value">${frontend.avg_hits_per_visitor}</div>
+            <small>Average pages per visitor</small>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Hourly Traffic Distribution</h3>
+          <div id="hourly-chart"></div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Daily Visitor Trend (Last 30 Days)</h3>
+          <div id="daily-trend-chart"></div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Top 10 Most Visited Pages</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Page</th><th>Visits</th><th>Percentage</th></tr>
+              </thead>
+              <tbody>
+                ${Object.entries(frontend.top_pages || {}).map(([page, count]) => `
+                  <tr>
+                    <td style="word-break: break-word;">${page}</td>
+                    <td>${count.toLocaleString()}</td>
+                    <td>${((count / frontend.total_hits) * 100).toFixed(1)}%</td>
+                  </tr>
+                `).join('')}
+                ${Object.keys(frontend.top_pages || {}).length === 0 ? '<tr><td colspan="3">No page data available</td></tr>' : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Page Visitor Details</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Page</th><th>Total Visits</th><th>Unique Visitors</th><th>Last Visit</th></tr>
+              </thead>
+              <tbody>
+                ${(frontend.page_visitor_details || []).slice(0, 10).map(page => `
+                  <tr>
+                    <td style="word-break: break-word;">${page.page}</td>
+                    <td>${page.total_visits}</td>
+                    <td>${page.unique_visitors}</td>
+                    <td>${page.last_visit ? page.last_visit.split(' ')[0] : 'N/A'}</td>
+                  </tr>
+                `).join('')}
+                ${(frontend.page_visitor_details || []).length === 0 ? '<tr><td colspan="4">No page visitor data available</td></tr>' : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Visitor IP Details (Top 20)</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>IP Address</th><th>Visit Count</th><th>Pages Visited</th><th>Last Seen</th></tr>
+              </thead>
+              <tbody>
+                ${(frontend.visitor_ip_details || []).slice(0, 20).map(visitor => `
+                  <tr>
+                    <td><code>${visitor.ip}</code></td>
+                    <td>${visitor.visit_count}</td>
+                    <td>${visitor.pages_visited.slice(0, 3).join(', ')}${visitor.pages_visited.length > 3 ? '...' : ''}</td>
+                    <td>${visitor.last_seen ? visitor.last_seen.split(' ')[0] : 'N/A'}</td>
+                  </tr>
+                `).join('')}
+                ${(frontend.visitor_ip_details || []).length === 0 ? '<tr><td colspan="4">No visitor IP data available</td></tr>' : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBackendAnalytics(backend) {
+      if (!backend.total_admin_visits || backend.total_admin_visits === 0) {
+        return `
+          <div class="section-card">
+            <p style="text-align: center; color: #94a3b8;">No admin panel activity recorded yet.<br>Login to the admin panel to generate analytics data.</p>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Admin Visits</h3>
+            <div class="stat-value">${backend.total_admin_visits.toLocaleString()}</div>
+            <small>Total admin page views</small>
+          </div>
+          <div class="stat-card">
+            <h3>Unique Admin Users</h3>
+            <div class="stat-value">${backend.unique_admin_users}</div>
+            <small>Distinct admin logins</small>
+          </div>
+          <div class="stat-card">
+            <h3>Content Changes</h3>
+            <div class="stat-value">${backend.content_changes.length}</div>
+            <small>Posts, updates, deletions</small>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Admin User Sessions</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>User</th><th>Visits</th><th>Pages Visited</th><th>Content Actions</th><th>Modules Accessed</th><th>Last Active</th></tr>
+              </thead>
+              <tbody>
+                ${Object.entries(backend.admin_sessions || {}).map(([user, data]) => `
+                  <tr>
+                    <td><strong>${user}</strong></td>
+                    <td>${data.visits}</td>
+                    <td>${data.pages_visited}</td>
+                    <td><span class="badge-info">${data.content_actions}</span></td>
+                    <td>
+                      ${Object.entries(data.modules_accessed || {}).slice(0, 3).map(([module, count]) =>
+        `<div style="font-size: 0.7rem; margin: 2px 0;">${module}: ${count}</div>`
+      ).join('')}
+                      ${Object.keys(data.modules_accessed || {}).length > 3 ? '<div class="badge-info">+ more</div>' : ''}
+                    </td>
+                    <td>${data.last_seen ? data.last_seen.split(' ')[0] : 'N/A'}</td>
+                  </tr>
+                `).join('')}
+                ${Object.keys(backend.admin_sessions || {}).length === 0 ? '<tr><td colspan="6">No admin sessions recorded</td></tr>' : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Module Activity Summary</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Module</th><th>Total Changes</th><th>Recent Activity</th></tr>
+              </thead>
+              <tbody>
+                ${Object.entries(backend.module_activity || {}).map(([module, data]) => `
+                  <tr>
+                    <td>${module}</td>
+                    <td><span class="badge-success">${data.total_changes}</span></td>
+                    <td>
+                      ${(data.recent_changes || []).slice(0, 2).map(change =>
+        `<div style="font-size: 0.7rem; margin: 2px 0;">${change.timestamp?.split(' ')[1]} - ${change.user}: ${change.method}</div>`
+      ).join('')}
+                    </td>
+                  </tr>
+                `).join('')}
+                ${Object.keys(backend.module_activity || {}).length === 0 ? '<tr><td colspan="3">No module activity recorded</td></tr>' : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Recent Content Changes</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Time</th><th>User</th><th>Module</th><th>Action</th><th>Details</th></tr>
+              </thead>
+              <tbody>
+                ${(backend.content_changes || []).slice(0, 30).map(change => `
+                  <tr>
+                    <td style="font-size: 0.75rem;">${change.timestamp || 'N/A'}</td>
+                    <td>${change.user}</td>
+                    <td>${change.module}</td>
+                    <td><span class="${change.method === 'POST' ? 'badge-success' : change.method === 'DELETE' ? 'badge-danger' : 'badge-warning'}">${change.method}</span></td>
+                    <td style="font-size: 0.8rem; word-break: break-word;">${change.details || change.path}</td>
+                  </tr>
+                `).join('')}
+                ${(backend.content_changes || []).length === 0 ? '<tr><td colspan="5">No content changes recorded yet</td></tr>' : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Recent Authentication Events</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Username</th>
+                  <th>Event Type</th>
+                  <th>Status</th>
+                  <th>IP Address</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(backend.auth_events || []).slice(0, 20).map(event => `
+                  <tr>
+                    <td style="font-size: 0.75rem; white-space: nowrap;">${event.timestamp || 'N/A'}</td>
+                    <td><strong>${event.username || 'N/A'}</strong></td>
+                    <td>${(event.event || 'login').toUpperCase()}</td>
+                    <td>
+                      <span class="${event.success ? 'badge-success' : 'badge-danger'}">
+                        ${event.success ? 'SUCCESS' : 'FAILED'}
+                      </span>
+                    </td>
+                    <td><code>${event.ip || 'unknown'}</code></td>
+                  </tr>
+                `).join('')}
+                ${(backend.auth_events || []).length === 0 ? '<tr><td colspan="5">No authentication events recorded</td></tr>' : ''}
+              </tbody>
+            </table>
+          </div>
+          ${(backend.recent_auth_failures || []).length > 0 ? `
+            <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(127, 29, 29, 0.3); border-radius: 8px; border-left: 3px solid #ef4444;">
+              <strong>Failed Login Attempts:</strong> ${backend.recent_auth_failures.length} recent failures
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    function renderSEOAnalytics(seo) {
+      if (!seo.total_traffic || seo.total_traffic === 0) {
+        return `
+          <div class="section-card">
+            <p style="text-align: center; color: #94a3b8;">No SEO data available yet.<br>Generate website traffic to see SEO metrics.</p>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Traffic</h3>
+            <div class="stat-value">${seo.total_traffic.toLocaleString()}</div>
+            <small>Total page views</small>
+          </div>
+          <div class="stat-card">
+            <h3>Mobile Traffic</h3>
+            <div class="stat-value">${seo.mobile_percentage}%</div>
+            <small>${seo.mobile_traffic} visits</small>
+          </div>
+          <div class="stat-card">
+            <h3>Desktop Traffic</h3>
+            <div class="stat-value">${seo.desktop_percentage}%</div>
+            <small>${seo.desktop_traffic} visits</small>
+          </div>
+          <div class="stat-card">
+            <h3>Load Time</h3>
+            <div class="stat-value">${seo.avg_load_time_ms}ms</div>
+            <small>Average response time</small>
+          </div>
+          <div class="stat-card">
+            <h3>404 Errors</h3>
+            <div class="stat-value">${seo.not_found_percentage}%</div>
+            <small>Broken pages rate</small>
+          </div>
+          <div class="stat-card">
+            <h3>Pages Indexed</h3>
+            <div class="stat-value">${seo.total_pages_indexed}</div>
+            <small>Unique pages found</small>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">Pages Discovered</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr><th>Page URL</th></tr>
+              </thead>
+              <tbody>
+                ${(seo.pages_list || []).slice(0, 20).map(page => `
+                  <tr><td style="word-break: break-word;">${page}</td></tr>
+                `).join('')}
+                ${(seo.pages_list || []).length === 0 ? '<tr><td>No pages discovered yet</td></tr>' : ''}
+                ${(seo.pages_list || []).length > 20 ? `<tr><td><em>... and ${seo.pages_list.length - 20} more pages</em></td></tr>` : ''}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderHourlyChart(hourlyData) {
+      const container = document.getElementById('hourly-chart');
+      if (!container) return;
+
+      const hours = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+      const maxCount = Math.max(...Object.values(hourlyData || {}), 1);
+
+      container.innerHTML = `
+        <div>
+          ${hours.map(hour => {
+        const count = (hourlyData || {})[hour] || 0;
+        const percent = (count / maxCount) * 100;
+        return `
+              <div class="hour-row">
+                <span class="hour-label">${hour}</span>
+                <div class="hour-bar">
+                  <div class="hour-fill" style="width: ${percent}%;"></div>
+                </div>
+                <span class="hour-count">${count}</span>
+              </div>
+            `;
+      }).join('')}
+        </div>
+      `;
+    }
+
+    function renderDailyTrendChart(dailyTrend) {
+      const container = document.getElementById('daily-trend-chart');
+      if (!container) return;
+
+      const days = Object.keys(dailyTrend || {});
+      const values = Object.values(dailyTrend || {});
+
+      if (days.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #64748b;">No daily trend data available</p>';
+        return;
+      }
+
+      const maxValue = Math.max(...values, 1);
+
+      container.innerHTML = `
+        <div>
+          ${days.slice(-30).map((day) => {
+        const value = dailyTrend[day];
+        const percent = (value / maxValue) * 100;
+        return `
+              <div class="hour-row">
+                <span class="hour-label" style="width: 100px;">${day}</span>
+                <div class="hour-bar">
+                  <div class="hour-fill" style="width: ${percent}%;"></div>
+                </div>
+                <span class="hour-count">${value}</span>
+              </div>
+            `;
+      }).join('')}
+        </div>
+      `;
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.dataset.tab;
+        activateTab(tabId);
+      });
+    });
+
+    // Period selector
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPeriod = btn.dataset.period;
+        loadAnalytics(true);
+      });
+    });
+
+    // Export CSV
+    document.getElementById('export-csv-btn').addEventListener('click', () => {
+      const exportType = document.getElementById('export-type').value;
+      window.location.href = `/cppipr_cms/analytics/export-csv?type=${exportType}&period=${currentPeriod}`;
+    });
+
+    // Export PDF
+    document.getElementById('export-pdf-btn').addEventListener('click', () => {
+      window.location.href = `/cppipr_cms/analytics/export-pdf?period=${currentPeriod}`;
+    });
+
+    // Refresh button
+    document.getElementById('refresh-btn').addEventListener('click', () => {
+      loadAnalytics(true);
+    });
+
+    // Initial load
+    loadAnalytics(true);
+  </script>
+</body>
+
+</html>

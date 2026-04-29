@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - CPP-IPR</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header h1 {
+      font-size: 1.8rem;
+      background: linear-gradient(to right, #f59e0b, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .logout-btn {
+      background: #1e293b;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #e5e7eb;
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #334155;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+      margin-bottom: 1.5rem;
+    }
+
+    .flash-message {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .flash-success {
+      background: #166534;
+      color: #dcfce7;
+    }
+
+    .flash-error {
+      background: #7f1d1d;
+      color: #fecaca;
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: #020617;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(245, 158, 11, 0.5);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header h1 {
+        font-size: 1.4rem;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Admin Dashboard</h1>
+      <a href="{{ url_for('admin_auth.admin_logout') }}" class="logout-btn"
+        onclick="return confirm('Are you sure you want to logout?')">Logout</a>
+    </div>
+
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="flash-message flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="subtitle">
+      Manage various website modules from this central panel. Click a card to open the corresponding control page.
+    </div>
+
+    <div class="dashboard-grid">
+      <a href="{{ url_for('admin_carousal.admin_carousal') }}" class="card">
+        <div class="card-icon">🎠</div>
+        <div class="card-title">Home Carousel Control</div>
+        <div class="card-desc">Manage homepage carousel images and content</div>
+      </a>
+
+      <a href="{{ url_for('admin_notice.admin_current_notice') }}" class="card">
+        <div class="card-icon">📢</div>
+        <div class="card-title">Current Notice Control</div>
+        <div class="card-desc">Add, edit, or remove current notices</div>
+      </a>
+
+      <a href="{{ url_for('admin_research.admin_research_highlight') }}" class="card">
+        <div class="card-icon">🔬</div>
+        <div class="card-title">Research Highlight Control</div>
+        <div class="card-desc">Manage research highlights and achievements</div>
+      </a>
+
+      <a href="{{ url_for('admin_publication.admin_recent_publication') }}" class="card">
+        <div class="card-icon">📚</div>
+        <div class="card-title">Recent Publication Control</div>
+        <div class="card-desc">Manage recent publications and papers</div>
+      </a>
+
+      <a href="{{ url_for('admin_forms_links.admin_forms_links') }}" class="card">
+        <div class="card-icon">📋</div>
+        <div class="card-title">Forms & Links Control</div>
+        <div class="card-desc">Manage downloadable forms and important links</div>
+      </a>
+
+      <a href="{{ url_for('admin_people.admin_people') }}" class="card">
+        <div class="card-icon">👥</div>
+        <div class="card-title">People Control</div>
+        <div class="card-desc">Manage faculty, staff, and research team members</div>
+      </a>
+
+      <a href="{{ url_for('admin_tender.admin_tender_page') }}" class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">Tender Control</div>
+        <div class="card-desc">Manage tender notices and documents</div>
+      </a>
+
+      <a href="{{ url_for('admin_advertisement.admin_advertisement_page') }}" class="card">
+        <div class="card-icon">📢</div>
+        <div class="card-title">Advertisement Control</div>
+        <div class="card-desc">Manage advertisements and announcements</div>
+      </a>
+
+      <a href="{{ url_for('admin_analytics.admin_analytics_page') }}" class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Analytics Dashboard</div>
+        <div class="card-desc">View website traffic and user analytics</div>
+      </a>
+    </div>
+  </div>
+</body>
+
+</html>
